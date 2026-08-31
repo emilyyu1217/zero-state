@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zero State — An open lab for physical intelligence</title>
+<meta name="description" content="The next decade of AI happens in the physical world. Zero State is the lab for everyone else.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #000000;
+    --ink: #ffffff;
+    --muted: #555555;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--ink);
+    font-family: 'Newsreader', Georgia, serif;
+    font-weight: 400;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ——— Scanline overlay ——— */
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 2px,
+      rgba(0, 0, 0, 0.12) 2px,
+      rgba(0, 0, 0, 0.12) 4px
+    );
+    pointer-events: none;
+    z-index: 100;
+  }
+
+  /* ——— Pixel grid texture ——— */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(circle, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 16px 16px;
+    pointer-events: none;
+    z-index: 99;
+  }
+
+  /* ——— Header ——— */
+  header {
+    padding: 28px 48px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    flex-shrink: 0;
+    z-index: 10;
+  }
+
+  /* Pixel art "0 STATE" logo */
+  .pixel-logo {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  .pixel-logo svg {
+    display: block;
+    height: 14px;
+  }
+
+  .meta {
+    margin-left: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  /* ——— Hero / Manifesto ——— */
+  .hero {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 48px;
+    position: relative;
+    z-index: 10;
+  }
+
+  .manifesto-block {
+    max-width: 680px;
+    text-align: left;
+  }
+
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.24em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 32px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .section-label::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--muted);
+    opacity: 0.4;
+  }
+
+  /* Blinking cursor after label */
+  .cursor {
+    display: inline-block;
+    width: 7px;
+    height: 13px;
+    background: var(--ink);
+    margin-left: 6px;
+    animation: blink 1s step-end infinite;
+    vertical-align: middle;
+    opacity: 0.7;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 0.7; }
+    50% { opacity: 0; }
+  }
+
+  .manifesto-line {
+    font-family: 'Newsreader', Georgia, serif;
+    font-size: clamp(17px, 1.8vw, 22px);
+    line-height: 1.6;
+    font-weight: 300;
+    letter-spacing: 0.01em;
+    color: rgba(255, 255, 255, 0.5);
+    text-shadow:
+      0 0 20px rgba(255, 255, 255, 0.06),
+      0 0 40px rgba(255, 255, 255, 0.03);
+  }
+
+  .manifesto-line + .manifesto-line {
+    margin-top: 12px;
+  }
+
+  .manifesto-line em {
+    font-style: italic;
+    color: rgba(255, 255, 255, 0.9);
+    text-shadow:
+      0 0 8px rgba(255, 255, 255, 0.35),
+      0 0 24px rgba(255, 255, 255, 0.15),
+      0 0 48px rgba(255, 255, 255, 0.06);
+  }
+
+  /* First and last lines — bright, luminous */
+  .manifesto-line.highlight {
+    color: var(--ink);
+    text-shadow:
+      0 0 20px rgba(255, 255, 255, 0.18),
+      0 0 50px rgba(255, 255, 255, 0.08);
+  }
+
+  .manifesto-line.highlight em {
+    text-shadow:
+      0 0 12px rgba(255, 255, 255, 0.6),
+      0 0 36px rgba(255, 255, 255, 0.25),
+      0 0 70px rgba(255, 255, 255, 0.1);
+  }
+
+  @keyframes breathe {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.72; }
+  }
+
+  /* ——— Background gears ——— */
+  .gears {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .gear {
+    position: absolute;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
+
+  .gear svg {
+    width: 100%;
+    height: 100%;
+    filter: blur(0.8px) drop-shadow(0 0 20px rgba(255,255,255,0.12));
+  }
+
+  .gear--1 {
+    width: 600px; height: 600px;
+    bottom: -200px; right: -140px;
+    opacity: 0.14;
+    animation: spin 180s linear infinite;
+  }
+  .gear--2 {
+    width: 380px; height: 380px;
+    top: -120px; left: -100px;
+    opacity: 0.1;
+    animation: spin-reverse 140s linear infinite;
+  }
+  .gear--3 {
+    width: 180px; height: 180px;
+    bottom: 8%; left: 12%;
+    opacity: 0.07;
+    animation: spin 200s linear infinite;
+  }
+  .gear--4 {
+    width: 280px; height: 280px;
+    top: 8%; right: 6%;
+    opacity: 0.08;
+    animation: spin-reverse 160s linear infinite;
+  }
+  .gear--5 {
+    width: 120px; height: 120px;
+    top: 62%; left: 4%;
+    opacity: 0.06;
+    animation: spin 120s linear infinite;
+  }
+
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  @keyframes spin-reverse {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(-360deg); }
+  }
+
+  /* ——— Footer ——— */
+  footer {
+    padding: 28px 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--muted);
+    text-transform: uppercase;
+    flex-shrink: 0;
+    z-index: 10;
+  }
+
+  footer .state-tag {
+    font-family: 'Newsreader', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--muted);
+    letter-spacing: 0;
+    text-transform: none;
+  }
+
+  footer a {
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.3s, text-shadow 0.3s;
+  }
+
+  footer a:hover {
+    color: var(--ink);
+    text-shadow: 0 0 12px rgba(255, 255, 255, 0.3);
+  }
+
+  /* ——— Responsive ——— */
+  @media (max-width: 760px) {
+    header { padding: 18px 22px; flex-wrap: wrap; gap: 10px; }
+    footer { padding: 18px 22px; flex-wrap: wrap; gap: 10px; }
+    .hero { padding: 0 24px; }
+    .meta { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="gears" id="gears"></div>
+
+<header>
+  <div class="pixel-logo">
+    <!--
+      Pixel font "0 STATE" — each character on a 5x7 grid, 1px unit.
+      0: cols 0-4 | gap: 3 cols | S: cols 8-12 | T: cols 14-18 | A: cols 20-24 | T: cols 26-30 | E: cols 32-36
+    -->
+    <svg viewBox="0 0 37 7" fill="white" shape-rendering="crispEdges">
+      <!-- 0 (slashed zero) -->
+      <rect x="1" y="0" width="3" height="1"/>
+      <rect x="0" y="1" width="1" height="1"/><rect x="4" y="1" width="1" height="1"/>
+      <rect x="0" y="2" width="1" height="1"/><rect x="3" y="2" width="1" height="1"/><rect x="4" y="2" width="1" height="1"/>
+      <rect x="0" y="3" width="1" height="1"/><rect x="2" y="3" width="1" height="1"/><rect x="4" y="3" width="1" height="1"/>
+      <rect x="0" y="4" width="1" height="1"/><rect x="1" y="4" width="1" height="1"/><rect x="4" y="4" width="1" height="1"/>
+      <rect x="0" y="5" width="1" height="1"/><rect x="4" y="5" width="1" height="1"/>
+      <rect x="1" y="6" width="3" height="1"/>
+
+      <!-- S -->
+      <rect x="9" y="0" width="3" height="1"/>
+      <rect x="8" y="1" width="1" height="1"/><rect x="12" y="1" width="1" height="1"/>
+      <rect x="8" y="2" width="1" height="1"/>
+      <rect x="9" y="3" width="3" height="1"/>
+      <rect x="12" y="4" width="1" height="1"/>
+      <rect x="8" y="5" width="1" height="1"/><rect x="12" y="5" width="1" height="1"/>
+      <rect x="9" y="6" width="3" height="1"/>
+
+      <!-- T -->
+      <rect x="14" y="0" width="5" height="1"/>
+      <rect x="16" y="1" width="1" height="1"/>
+      <rect x="16" y="2" width="1" height="1"/>
+      <rect x="16" y="3" width="1" height="1"/>
+      <rect x="16" y="4" width="1" height="1"/>
+      <rect x="16" y="5" width="1" height="1"/>
+      <rect x="16" y="6" width="1" height="1"/>
+
+      <!-- A -->
+      <rect x="21" y="0" width="3" height="1"/>
+      <rect x="20" y="1" width="1" height="1"/><rect x="24" y="1" width="1" height="1"/>
+      <rect x="20" y="2" width="1" height="1"/><rect x="24" y="2" width="1" height="1"/>
+      <rect x="20" y="3" width="5" height="1"/>
+      <rect x="20" y="4" width="1" height="1"/><rect x="24" y="4" width="1" height="1"/>
+      <rect x="20" y="5" width="1" height="1"/><rect x="24" y="5" width="1" height="1"/>
+      <rect x="20" y="6" width="1" height="1"/><rect x="24" y="6" width="1" height="1"/>
+
+      <!-- T -->
+      <rect x="26" y="0" width="5" height="1"/>
+      <rect x="28" y="1" width="1" height="1"/>
+      <rect x="28" y="2" width="1" height="1"/>
+      <rect x="28" y="3" width="1" height="1"/>
+      <rect x="28" y="4" width="1" height="1"/>
+      <rect x="28" y="5" width="1" height="1"/>
+      <rect x="28" y="6" width="1" height="1"/>
+
+      <!-- E -->
+      <rect x="32" y="0" width="5" height="1"/>
+      <rect x="32" y="1" width="1" height="1"/>
+      <rect x="32" y="2" width="1" height="1"/>
+      <rect x="32" y="3" width="4" height="1"/>
+      <rect x="32" y="4" width="1" height="1"/>
+      <rect x="32" y="5" width="1" height="1"/>
+      <rect x="32" y="6" width="5" height="1"/>
+    </svg>
+  </div>
+  <div class="meta">a robotics open lab · san francisco</div>
+</header>
+
+<section class="hero">
+  <div class="manifesto-block">
+    <div class="section-label">Manifesto <span class="cursor"></span></div>
+    <p class="manifesto-line highlight">The next decade of AI is <em>physical.</em></p>
+    <p class="manifesto-line">Every breakthrough comes from small groups of extraordinary people building in the open. Today that frontier sits behind the walls of a handful of well-funded labs. Zero State is the lab for everyone outside them: distributed talent, open work, shared frontier.</p>
+    <p class="manifesto-line highlight">Putting intelligence into the physical world starts at <em>q₀</em>. Build it with us.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="state-tag">q₀ = 0</div>
+  <div><a href="mailto:hello@zero-state.ai">hello@zero-state.ai</a></div>
+</footer>
+
+<script>
+  // Generate gear SVG paths
+  function gearPath(cx, cy, outerR, innerR, teeth) {
+    const pts = [];
+    for (let i = 0; i < teeth; i++) {
+      const a = (i / teeth) * Math.PI * 2;
+      const step = (1 / teeth) * Math.PI * 2;
+      // Tooth rise
+      pts.push(polar(cx, cy, innerR, a));
+      pts.push(polar(cx, cy, outerR, a + step * 0.12));
+      // Tooth top
+      pts.push(polar(cx, cy, outerR, a + step * 0.38));
+      // Tooth fall
+      pts.push(polar(cx, cy, innerR, a + step * 0.5));
+    }
+    return 'M' + pts.map(p => p.join(',')).join('L') + 'Z';
+  }
+
+  function polar(cx, cy, r, angle) {
+    return [
+      (cx + r * Math.cos(angle)).toFixed(2),
+      (cy + r * Math.sin(angle)).toFixed(2)
+    ];
+  }
+
+  function circlePath(cx, cy, r) {
+    return `M${cx-r},${cy}A${r},${r},0,1,0,${cx+r},${cy}A${r},${r},0,1,0,${cx-r},${cy}Z`;
+  }
+
+  const gears = [
+    { cls: 'gear--1', teeth: 20, outerR: 48, innerR: 40, holeR: 14, spokeR: 26 },
+    { cls: 'gear--2', teeth: 14, outerR: 48, innerR: 40, holeR: 12, spokeR: 24 },
+    { cls: 'gear--3', teeth: 10, outerR: 48, innerR: 39, holeR: 14, spokeR: 26 },
+    { cls: 'gear--4', teeth: 16, outerR: 48, innerR: 41, holeR: 10, spokeR: 22 },
+    { cls: 'gear--5', teeth: 8,  outerR: 48, innerR: 38, holeR: 14, spokeR: 26 },
+  ];
+
+  const container = document.getElementById('gears');
+
+  gears.forEach(g => {
+    const outer = gearPath(50, 50, g.outerR, g.innerR, g.teeth);
+    const hole = circlePath(50, 50, g.holeR);
+
+    // Build spokes (4 spokes)
+    let spokes = '';
+    for (let i = 0; i < 4; i++) {
+      const a = (i / 4) * Math.PI * 2;
+      const x1 = 50 + g.holeR * Math.cos(a);
+      const y1 = 50 + g.holeR * Math.sin(a);
+      const x2 = 50 + g.spokeR * Math.cos(a);
+      const y2 = 50 + g.spokeR * Math.sin(a);
+      spokes += `<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke="white" stroke-width="0.6"/>`;
+    }
+
+    const div = document.createElement('div');
+    div.className = `gear ${g.cls}`;
+    div.innerHTML = `
+      <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="${outer}" stroke="white" stroke-width="0.35"/>
+        <circle cx="50" cy="50" r="${g.holeR}" stroke="white" stroke-width="0.35"/>
+        ${spokes}
+      </svg>`;
+    container.appendChild(div);
+  });
+</script>
+
+</body>
+</html>
