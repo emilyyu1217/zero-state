@@ -245,6 +245,47 @@
     to { transform: rotate(-360deg); }
   }
 
+  /* ——— Event banner ——— */
+  .event-banner {
+    text-align: center;
+    padding: 0 48px 20px;
+    z-index: 10;
+    flex-shrink: 0;
+  }
+
+  .event-banner a {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    color: var(--ink);
+    text-transform: uppercase;
+    text-decoration: none;
+    opacity: 0.45;
+    transition: opacity 0.4s, text-shadow 0.4s;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .event-banner a:hover {
+    opacity: 0.85;
+    text-shadow: 0 0 16px rgba(255, 255, 255, 0.25);
+  }
+
+  .event-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--ink);
+    animation: pulse-dot 2.4s ease-in-out infinite;
+    flex-shrink: 0;
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 0.9; box-shadow: 0 0 4px rgba(255,255,255,0.3); }
+    50% { opacity: 0.25; box-shadow: none; }
+  }
+
   /* ——— Footer ——— */
   footer {
     padding: 28px 48px;
@@ -366,6 +407,13 @@
     <p class="manifesto-line highlight">Putting intelligence into the physical world starts at <em>q<sub>0</sub></em>. Build it with us.</p>
   </div>
 </section>
+
+<div class="event-banner">
+  <a href="mailto:hello@zero-state.ai">
+    <span class="event-dot"></span>
+    First event — October 2026
+  </a>
+</div>
 
 <footer>
   <div class="state-tag">q₀ = 0</div>
